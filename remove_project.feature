@@ -1,5 +1,6 @@
 Feature: Remove project
-# O objetivo desta funcionalidade é descrever o comportamento da remoção de projetos.
+# O objetivo desta funcionalidade é descrever o comportamento da remoção de projetos. 
+# Nesse caso, assumindo que o terraplaner tenha a funcionalidade de backend remove_project.
 # Descreve o cenário de sucesso, as validações de segurança e a integridade dos dados enviados.
 
   #----------------------------------------------------------------------------------------------------
@@ -94,5 +95,52 @@ Feature: Remove project
     """
     {
       "message": "Formato de projectId inválido"
+    }
+    """
+
+  #----------------------------------------------------------------------------------------------------
+  # Objetivo: Validar a lógica de confirmação da remoção.
+  # Descrição: Este teste garante que a remoção de um projeto não ocorra se o campo 'confirm'
+  # for 'false'. A API deve retornar um erro claro ao cliente (código 400), prevenindo
+  # exclusões acidentais.
+  #----------------------------------------------------------------------------------------------------
+  Scenario: Remoção não confirmada
+    Given um cabeçalho "Authorization" com valor "tokenvalido1"
+    And um corpo com o nome "json_data" contendo:
+    """
+    {
+      "projectId": "111",
+      "confirm": false
+    }
+    """
+    When uma requisicao de "POST" é enviada para "/RemoveProject"
+    Then a resposta deve ter o codigo 400
+    And o corpo deve conter:
+    """
+    {
+      "message": "A remoção do projeto não foi confirmada"
+    }
+    """
+
+  #----------------------------------------------------------------------------------------------------
+  # Objetivo: Validar a resposta para um recurso não encontrado.
+  # Descrição: Este teste verifica se a API retorna o código 404 (Not Found) ao tentar remover um
+  # projeto com um ID que não existe. Isso demonstra o tratamento correto de integridade de dados.
+  #----------------------------------------------------------------------------------------------------
+  Scenario: Tentativa de remoção de um projeto inexistente
+    Given um cabeçalho "Authorization" com valor "tokenvalido1"
+    And um corpo com o nome "json_data" contendo:
+    """
+    {
+      "projectId": "7777777",
+      "confirm": true
+    }
+    """
+    When uma requisicao de "POST" é enviada para "/RemoveProject"
+    Then a resposta deve ter o codigo 404
+    And o corpo deve conter:
+    """
+    {
+      "message": "Projeto com o ID 99999 não encontrado"
     }
     """
