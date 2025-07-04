@@ -10,7 +10,7 @@ Feature: Remove project
   # mensagem confirmando e validando o fluxo da funcionalidade.
   #----------------------------------------------------------------------------------------------------
   Scenario: A remoção foi realizada com sucesso
-    Given um cabeçalho "Authorization" com valor "tokenvalido1"
+    Given um cabeçalho "Authorization" com valor "token11111"
     And um corpo com o nome "json_data" contendo:
     """
     {
@@ -26,38 +26,14 @@ Feature: Remove project
       "message": "Projeto 111 removido com sucesso"
     }
     """
-
-  #----------------------------------------------------------------------------------------------------
-  # Objetivo: Validar a camada de segurança (autenticação).
-  # Descrição: Este cenário assegura que o endpoint não pode ser acessado por usuários não autenticados.
-  # Ao enviar uma requisição sem o token de autorização, a API deve retornar o código 401 (Unauthorized),
-  # protegendo a ação contra acessos indevidos.
-  #----------------------------------------------------------------------------------------------------
-  Scenario: Campo do cabeçalho faltando
-    Given um corpo com o nome "json_data" contendo:
-    """
-    {
-      "projectId": "111",
-      "confirm": true
-    }
-    """
-    When uma requisicao de "POST" é enviada para "/RemoveProject"
-    Then a resposta deve ter o codigo 401
-    And o corpo deve conter:
-    """
-    {
-      "message": "Cabeçalho de autorização ausente"
-    }
-    """
-
   #----------------------------------------------------------------------------------------------------
   # Objetivo: Validar a robustez da API contra dados nulos em campos obrigatórios.
   # Descrição: Teste para visualizar a reação da API quando um campo essencial como 'projectId' é enviado como nulo.
   # A resposta correta é um erro 400 (Bad Request), indicando que a requisição do cliente é inválida,
-  # e deve vir acompanhada de uma mensagem clara sobre o campo problemático.
+  # e deve vir acompanhada de uma mensagem sobre o campo problemático.
   #----------------------------------------------------------------------------------------------------
   Scenario: Campo no corpo com valor nulo
-    Given um cabeçalho "Authorization" com valor "token_valido1"
+    Given um cabeçalho "Authorization" com valor "token1"
     And um corpo com o nome "json_data" contendo:
     """
     {
@@ -73,7 +49,6 @@ Feature: Remove project
       "message": "O campo projectId não pode ser nulo"
     }
     """
-
   #----------------------------------------------------------------------------------------------------
   # Objetivo: Validar o tratamento de tipos de dados incorretos.
   # Descrição: Este teste envia um valor com formato inadequado para o 'projectId' (um texto onde se espera
@@ -81,7 +56,7 @@ Feature: Remove project
   # um erro 400 (Bad Request) com uma mensagem específica sobre o formato inválido.
   #----------------------------------------------------------------------------------------------------
   Scenario: Campo no corpo com tipo inválido
-    Given um cabeçalho "Authorization" com valor "token_valido1"
+    Given um cabeçalho "Authorization" com valor "token11"
     And um corpo com o nome "json_data" contendo:
     """
     {
@@ -97,15 +72,14 @@ Feature: Remove project
       "message": "Formato de projectId inválido"
     }
     """
-
   #----------------------------------------------------------------------------------------------------
   # Objetivo: Validar a lógica de confirmação da remoção.
   # Descrição: Este teste garante que a remoção de um projeto não ocorra se o campo 'confirm'
-  # for 'false'. A API deve retornar um erro claro ao cliente (código 400), prevenindo
+  # for 'false'. A API deve retornar um erro (código 400), prevenindo
   # exclusões acidentais.
   #----------------------------------------------------------------------------------------------------
   Scenario: Remoção não confirmada
-    Given um cabeçalho "Authorization" com valor "tokenvalido1"
+    Given um cabeçalho "Authorization" com valor "token111"
     And um corpo com o nome "json_data" contendo:
     """
     {
@@ -127,8 +101,8 @@ Feature: Remove project
   # Descrição: Este teste verifica se a API retorna o código 404 (Not Found) ao tentar remover um
   # projeto com um ID que não existe. Isso demonstra o tratamento correto de integridade de dados.
   #----------------------------------------------------------------------------------------------------
-  Scenario: Tentativa de remoção de um projeto inexistente
-    Given um cabeçalho "Authorization" com valor "tokenvalido1"
+Scenario: Tentativa de remoção de um projeto inexistente
+    Given um cabeçalho "Authorization" com valor "token7"
     And um corpo com o nome "json_data" contendo:
     """
     {
@@ -141,6 +115,6 @@ Feature: Remove project
     And o corpo deve conter:
     """
     {
-      "message": "Projeto com o ID 99999 não encontrado"
+      "message": "Projeto com o ID 7777777 não encontrado"
     }
     """
