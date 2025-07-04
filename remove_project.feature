@@ -118,3 +118,4 @@ Scenario: Tentativa de remoção de um projeto inexistente
       "message": "Projeto com o ID 7777777 não encontrado"
     }
     """
+    
